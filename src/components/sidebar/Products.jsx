@@ -3,7 +3,7 @@ import { getProducts } from '../../data/api/getApi';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Skeleton from 'react-loading-skeleton';
 import { HiMiniFunnel, HiOutlineFunnel } from 'react-icons/hi2';
-import { Offcanvas, OffcanvasBody } from 'reactstrap';
+import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap';
 import CategoryBar from './CategoryBar';
 
 export default function Products() {
@@ -44,6 +44,7 @@ export default function Products() {
                 </div>
             </div>
             <Offcanvas isOpen={isOpen} toggle={toggle} direction="start">
+                <OffcanvasHeader toggle={toggle}></OffcanvasHeader>
                 <OffcanvasBody>
                     <CategoryBar />
                 </OffcanvasBody>
