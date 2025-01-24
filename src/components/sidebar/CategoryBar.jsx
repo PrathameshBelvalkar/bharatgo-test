@@ -1,23 +1,34 @@
 import { useQuery } from '@tanstack/react-query';
 import React from 'react'
 import { GoDash } from 'react-icons/go'
-import { HiMiniXMark } from 'react-icons/hi2';
+import { HiMagnifyingGlass, HiMiniXMark } from 'react-icons/hi2';
 import { getCategories } from '../../data/api/getApi';
 import DualRangeSlider from './components/DualRangeSlider';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
-export default function CategoryBar() {
+export default function CategoryBar({ className }) {
     const { data: categoryData, isLoading, isError } = useQuery({
         queryKey: ['categories'],
         queryFn: getCategories
     });
 
     return (
-        <>
+        <div className={`category-sidebar ${className}`}>
             {/* <div className='all-added-filters d-flex flex-column p-3'>
                 <span className='text-muted text-decoration-underline'>Reset all filter</span>
                 <span className='text-dark mt-1 added-filters'><HiMiniXMark size={20} className='cursor-pointer' />Clothes</span>
             </div> */}
+            <div className='ps-3 mt-2'>
+                <div className="search-container">
+                    <input
+                        type="text"
+                        className="form-control search-input"
+                        placeholder="Search..."
+                    />
+                    <HiMagnifyingGlass className="search-icon" size={20} />
+                </div>
+
+            </div>
             <div className='ps-3 mt-2'>
                 <span className='fw-medium fs-6 text-dark mt-2'>Price:</span>
                 <div className='mt-2 d-flex justify-content-between align-items-center'>
@@ -37,6 +48,6 @@ export default function CategoryBar() {
                     ))}
                 </div>
             </div>
-        </>
+        </div>
     )
 }

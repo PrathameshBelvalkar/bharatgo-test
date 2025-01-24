@@ -42,6 +42,10 @@ body {
     .small-block {
         display: block !important;
     }
+
+    .category-sidebar.hidesm {
+        display: none;
+    }
 }
 
 /* Category sidebar */
@@ -88,4 +92,26 @@ body {
     color: #fff;
     border-radius: 4px;
     background: #000;
+}
+
+.search-container {
+    position: relative;
+}
+
+.search-input {
+    height: 50px;
+    border-radius: 30px;
+    padding-left: 35px;
+    border: none;
+    padding-left: 2.5rem !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
+    border: 0.5px solid #000 !important;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #888;
 }
