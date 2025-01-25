@@ -12,7 +12,8 @@ export default function CategoryBar({ className, onPriceRangeChange, onCategoryC
     const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
     const [searchQuery, setSearchQuery] = useState("");
     const queryClient = useQueryClient();
-
+    const { name } = useParams();
+    console.log(name);
     const { data: categoryData, isLoading } = useQuery({
         queryKey: ["categories"],
         queryFn: getCategories,

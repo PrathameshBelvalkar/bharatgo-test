@@ -8,6 +8,7 @@ import CategoryBar from './CategoryBar';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/reducers/cartSlice';
 import debounce from "lodash.debounce";
+import { useParams } from 'react-router-dom';
 
 export default function Products() {
     const dispatch = useDispatch();
@@ -27,7 +28,7 @@ export default function Products() {
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['products', { priceRange, selectedCategory, searchQuery }],
+        queryKey: ['products', { priceRange, selectedCategory, searchQuery, name }],
         queryFn: ({ pageParam = 0, queryKey }) => {
             const { priceRange, selectedCategory, searchQuery } = queryKey[1];
             return getProducts(pageParam, selectedCategory, priceRange.min, priceRange.max, searchQuery);

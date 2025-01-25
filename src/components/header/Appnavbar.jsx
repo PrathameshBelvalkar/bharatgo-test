@@ -3,6 +3,9 @@ import { HiBars3CenterLeft, HiMiniUserCircle, HiMiniXMark, HiShoppingCart } from
 import { Collapse, Dropdown, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavbarText, NavItem, NavLink } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import CartModal from '../cart/CartModal';
+import { useQuery } from '@tanstack/react-query';
+import { getCategories } from '../../data/api/getApi';
+import { Link } from 'react-router-dom';
 export default function Appnavbar() {
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
@@ -11,6 +14,16 @@ export default function Appnavbar() {
     const totalQuantity = useSelector((state) => state.cart.totalQuantity);
     const [modal, setModal] = useState(false);
     const modaltoggle = () => setModal(!modal);
+    const { data: categoryData, isLoading } = useQuery({
+        queryKey: ["categories"],
+        queryFn: getCategories,
+    });
+    const [activeLink, setActiveLink] = useState('/');
+
+    const handleNavLinkClick = (path) => {
+        setActiveLink(path);
+    };
+
     return (
         <Navbar expand="md" className='border-bottom border-2 p-3'>
             <NavbarBrand className='fw-medium fs-5'>Shopi</NavbarBrand>
@@ -42,20 +55,15 @@ export default function Appnavbar() {
             <Collapse isOpen={isOpen} navbar>
                 <Nav className="me-auto" navbar>
                     <NavItem>
-                        <NavLink className='active-nav-link text-decoration-underline'>All</NavLink>
+                        <NavLink className={activeLink === '/' ? 'active-nav-link text-decoration-underline' : ''} onClick={() => handleNavLinkClick('/')}>All</NavLink>
                     </NavItem>
-                    <NavItem>
-                        <NavLink>Clothes</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink>Electronics</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink>Furniture</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink>Toys</NavLink>
-                    </NavItem>
+                    {categoryData?.slice(0, 4).map((category, index) => (
+                        <NavItem key={index}>
+                            <Link to={`/${category.name}`} className='text-decoration-none'>
+                                <NavLink className={activeLink === `/${category.name}` ? 'active-nav-link text-decoration-underline' : ''} onClick={() => handleNavLinkClick(`/${category.name}`)}>{category.name}</NavLink>
+                            </Link>
+                        </NavItem>
+                    ))}
                 </Nav>
                 <div className='nav-action'>
                     <NavbarText className='user-mail'>userintheapp@test.com</NavbarText>

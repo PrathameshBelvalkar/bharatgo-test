@@ -1,28 +1,15 @@
 import React from 'react'
-import Appnavbar from './components/header/Appnavbar'
-import CategoryBar from './components/sidebar/CategoryBar'
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import store from './redux/store';
-import Products from './components/sidebar/Products'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home';
 export default function App() {
-  const queryClient = new QueryClient()
   return (
-    <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <div><Appnavbar />
-          <div className='container'>
-            <div className='row mt-2'>
-              <div className='col-md-12'>
-                <Products />
-              </div>
-            </div>
-          </div>
-        </div>
-      </QueryClientProvider>
-    </Provider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/">
+          <Route index element={<Home />} />
+          <Route path=":name" element={<Home />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
