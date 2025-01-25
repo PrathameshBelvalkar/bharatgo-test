@@ -27,7 +27,7 @@ To get started with the project, follow these steps:
 1. Clone the repository.
 2. Install dependencies.
 3. Run the development server.
-4. Open your browser and navigate to `http://localhost:3000` to view the application.
+4. Open your browser and navigate to `http://localhost:5173` to view the application.
 
 ## Scripts
 
