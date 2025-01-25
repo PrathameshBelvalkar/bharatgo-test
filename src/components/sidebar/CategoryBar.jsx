@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GoDash } from "react-icons/go";
-import { HiMagnifyingGlass, HiMiniXMark } from "react-icons/hi2";
+import { HiMagnifyingGlass } from "react-icons/hi2";
 import { getCategories } from "../../data/api/getApi";
 import DualRangeSlider from "./components/DualRangeSlider";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import debounce from "lodash.debounce";
 
-export default function CategoryBar({ className }) {
+export default function CategoryBar({ className, onPriceRangeChange, onCategoryChange, onSearchChange }) {
     const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+    const [searchQuery, setSearchQuery] = useState("");
     const queryClient = useQueryClient();
+
     const { data: categoryData, isLoading } = useQuery({
         queryKey: ["categories"],
         queryFn: getCategories,
@@ -17,8 +20,17 @@ export default function CategoryBar({ className }) {
 
     const handleRangeChange = (min, max) => {
         setPriceRange({ min, max });
-        // queryClient.invalidateQueries(["products", { min, max }]);
+        onPriceRangeChange(min, max);
     };
+
+    const handleCategoryChange = (categoryId) => {
+        onCategoryChange(categoryId);
+    };
+
+    const handleSearchChange = debounce((e) => {
+        setSearchQuery(e.target.value);
+        onSearchChange(e.target.value);
+    }, 300);
 
     return (
         <div className={`category-sidebar ${className}`}>
@@ -28,6 +40,7 @@ export default function CategoryBar({ className }) {
                         type="text"
                         className="form-control search-input"
                         placeholder="Search..."
+                        onChange={handleSearchChange}
                     />
                     <HiMagnifyingGlass className="search-icon" size={20} />
                 </div>
@@ -62,7 +75,11 @@ export default function CategoryBar({ className }) {
                         <Skeleton count={8} />
                     ) : (
                         categoryData?.map((category, index) => (
-                            <span className="text-muted fw-medium cursor-pointer" key={index}>
+                            <span
+                                className="text-muted fw-medium cursor-pointer"
+                                key={index}
+                                onClick={() => handleCategoryChange(category.id)}
+                            >
                                 {category.name}
                             </span>
                         ))

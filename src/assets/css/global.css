@@ -124,3 +124,7 @@ body {
 .order-value {
     font-size: 14px;
 }
+
+.product-cart-button:disabled {
+    background-color: #646464;
+}

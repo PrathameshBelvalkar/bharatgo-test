@@ -16,10 +16,7 @@ export default function App() {
         <div><Appnavbar />
           <div className='container'>
             <div className='row mt-2'>
-              <div className='col-md-3'>
-                <CategoryBar className="hidesm" />
-              </div>
-              <div className='col-md-9'>
+              <div className='col-md-12'>
                 <Products />
               </div>
             </div>

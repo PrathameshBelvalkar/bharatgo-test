@@ -7,9 +7,17 @@ import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap';
 import CategoryBar from './CategoryBar';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../../redux/reducers/cartSlice';
+import debounce from "lodash.debounce";
 
 export default function Products() {
     const dispatch = useDispatch();
+
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const debouncedSearch = debounce((query) => {
+        setSearchQuery(query);
+    }, 300);
 
     const {
         data,
@@ -19,10 +27,10 @@ export default function Products() {
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['products', { min: 0, max: 10000 }],
+        queryKey: ['products', { priceRange, selectedCategory, searchQuery }],
         queryFn: ({ pageParam = 0, queryKey }) => {
-            const { min, max } = queryKey[1];
-            return getProducts(pageParam, '', min, max);
+            const { priceRange, selectedCategory, searchQuery } = queryKey[1];
+            return getProducts(pageParam, selectedCategory, priceRange.min, priceRange.max, searchQuery);
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length ? pages.length * 10 : undefined;
@@ -47,16 +55,20 @@ export default function Products() {
 
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
-
+    const [cartState, setCartState] = useState({});
     const handleAddToCart = (product) => {
         dispatch(addToCart(product));
+        setCartState((prevState) => ({
+            ...prevState,
+            [product.id]: { added: true }
+        }));
     };
 
     return (
         <div>
             <div className="d-flex align-items-baseline justify-content-between">
                 <h1 className="display-3">Products</h1>
-                <div className="small-block">
+                <div className="">
                     <button className="btn border shadow" onClick={toggle}>
                         <HiMiniFunnel size={24} />
                     </button>
@@ -65,7 +77,12 @@ export default function Products() {
             <Offcanvas isOpen={isOpen} toggle={toggle} direction="start">
                 <OffcanvasHeader toggle={toggle}></OffcanvasHeader>
                 <OffcanvasBody>
-                    <CategoryBar />
+                    <CategoryBar
+                        onPriceRangeChange={(min, max) => setPriceRange({ min, max })}
+                        onCategoryChange={setSelectedCategory}
+                        onSearchChange={debouncedSearch}
+                    />
+
                 </OffcanvasBody>
             </Offcanvas>
             <div className="mt-2">
@@ -117,8 +134,9 @@ export default function Products() {
                                             <button
                                                 className="product-cart-button"
                                                 onClick={() => handleAddToCart(product)}
+                                                disabled={cartState[product.id]?.added}
                                             >
-                                                Add To Cart
+                                                {cartState[product.id]?.added ? 'Added' : 'Add To Cart'}
                                             </button>
                                         </div>
                                     </div>
