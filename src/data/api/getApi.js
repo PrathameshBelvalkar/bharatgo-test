@@ -9,9 +9,9 @@ export const getCategories = async () => {
   return data;
 };
 
-export const getProducts = async (offset) => {
+export const getProducts = async (offset, search, min, max, category) => {
   const response = await fetch(
-    `https://api.escuelajs.co/api/v1/products?offset=${offset}&limit=10`,
+    `https://api.escuelajs.co/api/v1/products?offset=${offset}&limit=10&price_min=${min}&price_max=${max}`,
     {
       method: "GET",
       headers: {

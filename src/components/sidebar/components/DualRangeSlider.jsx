@@ -1,18 +1,27 @@
 import React, { useState } from "react";
 import "./dualrangeSlider.css";
 
-const DualRangeSlider = ({ min = 0, max = 10000, step = 100, initialMin = 0, initialMax = 10000 }) => {
+const DualRangeSlider = ({
+    min = 0,
+    max = 10000,
+    step = 100,
+    initialMin = 0,
+    initialMax = 10000,
+    onRangeChange,
+}) => {
     const [minValue, setMinValue] = useState(initialMin);
     const [maxValue, setMaxValue] = useState(initialMax);
 
     const handleMinChange = (e) => {
         const value = Math.min(parseInt(e.target.value), maxValue - step);
         setMinValue(value);
+        if (onRangeChange) onRangeChange(value, maxValue);
     };
 
     const handleMaxChange = (e) => {
         const value = Math.max(parseInt(e.target.value), minValue + step);
         setMaxValue(value);
+        if (onRangeChange) onRangeChange(minValue, value);
     };
 
     const progressStyle = {
@@ -50,3 +59,4 @@ const DualRangeSlider = ({ min = 0, max = 10000, step = 100, initialMin = 0, ini
 };
 
 export default DualRangeSlider;
+

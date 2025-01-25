@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { getProducts } from '../../data/api/getApi';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Skeleton from 'react-loading-skeleton';
-import { HiMiniFunnel, HiOutlineFunnel } from 'react-icons/hi2';
+import { HiMiniFunnel } from 'react-icons/hi2';
 import { Offcanvas, OffcanvasBody, OffcanvasHeader } from 'reactstrap';
 import CategoryBar from './CategoryBar';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../../redux/reducers/cartSlice';
 
 export default function Products() {
+    const dispatch = useDispatch();
+
     const {
         data,
         isLoading,
@@ -15,15 +19,23 @@ export default function Products() {
         hasNextPage,
         isFetchingNextPage,
     } = useInfiniteQuery({
-        queryKey: ['products'],
-        queryFn: ({ pageParam = 0 }) => getProducts(pageParam),
+        queryKey: ['products', { min: 0, max: 10000 }],
+        queryFn: ({ pageParam = 0, queryKey }) => {
+            const { min, max } = queryKey[1];
+            return getProducts(pageParam, '', min, max);
+        },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length ? pages.length * 10 : undefined;
         },
     });
 
     const handleScroll = () => {
-        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 100 && hasNextPage && !isFetchingNextPage) {
+        if (
+            window.innerHeight + window.scrollY >=
+            document.documentElement.scrollHeight - 50 &&
+            hasNextPage &&
+            !isFetchingNextPage
+        ) {
             fetchNextPage();
         }
     };
@@ -32,15 +44,22 @@ export default function Products() {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [hasNextPage, isFetchingNextPage]);
-    const [isOpen, setIsOpen] = useState(false);
 
+    const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
+
+    const handleAddToCart = (product) => {
+        dispatch(addToCart(product));
+    };
+
     return (
         <div>
             <div className="d-flex align-items-baseline justify-content-between">
                 <h1 className="display-3">Products</h1>
-                <div className='small-block'>
-                    <button className='btn border shadow' onClick={toggle}><HiMiniFunnel size={24} /></button>
+                <div className="small-block">
+                    <button className="btn border shadow" onClick={toggle}>
+                        <HiMiniFunnel size={24} />
+                    </button>
                 </div>
             </div>
             <Offcanvas isOpen={isOpen} toggle={toggle} direction="start">
@@ -52,7 +71,7 @@ export default function Products() {
             <div className="mt-2">
                 <div className="row">
                     {isLoading
-                        ? Array.from({ length: 8 }).map((_, index) => (
+                        ? Array.from({ length: 12 }).map((_, index) => (
                             <div className="col-md-4 col-sm-6" key={index}>
                                 <div className="card mb-2">
                                     <div className="p-3">
@@ -70,38 +89,45 @@ export default function Products() {
                         ))
                         : data?.pages.map((page, pageIndex) =>
                             page.map((product) => (
-                                <div className="col-md-4 col-sm-6" key={`${product.id}-${pageIndex}`}>
+                                <div
+                                    className="col-md-4 col-sm-6"
+                                    key={`${product.id}-${pageIndex}`}
+                                >
                                     <div className="card mb-4">
                                         <div className="p-3">
                                             <img
-                                                src={product.images}
+                                                src={product.images[0]}
                                                 alt={product.title}
                                                 className="card-img-top rounded"
                                                 onError={(e) =>
                                                     (e.target.onerror = null)(
                                                         (e.target.src =
-                                                            "https://placehold.co/1080?text=image+not+found")
+                                                            'https://placehold.co/1080?text=image+not+found')
                                                     )
                                                 }
                                             />
                                             <h6 className="fw-bold m-0 mt-2">{product.title}</h6>
                                             <small>{product.category.name}</small>
-                                            <p className="m-0 product-card-desc">{product.description}</p>
+                                            <p className="m-0 product-card-desc">
+                                                {product.description}
+                                            </p>
                                         </div>
                                         <div className="card-footer d-flex justify-content-between align-items-center">
                                             <h6 className="fw-bold mt-2">USD {product.price}</h6>
-                                            <button className="product-cart-button">Add To Cart</button>
+                                            <button
+                                                className="product-cart-button"
+                                                onClick={() => handleAddToCart(product)}
+                                            >
+                                                Add To Cart
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             ))
                         )}
-                </div>
-
-                {isFetchingNextPage && (
-                    <div className="row">
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <div className="col-md-4 col-sm-6" key={index}>
+                    {isFetchingNextPage &&
+                        Array.from({ length: 4 }).map((_, index) => (
+                            <div className="col-md-4 col-sm-6" key={`loading-${index}`}>
                                 <div className="card mb-2">
                                     <div className="p-3">
                                         <Skeleton height={150} className="card-img-top rounded" />
@@ -116,8 +142,7 @@ export default function Products() {
                                 </div>
                             </div>
                         ))}
-                    </div>
-                )}
+                </div>
             </div>
         </div>
     );

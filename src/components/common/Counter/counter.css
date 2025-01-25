@@ -1,0 +1,29 @@
+.counter {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0px 16px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.button {
+    font-size: 20px;
+    color: #000;
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.value {
+    margin: 0 16px;
+    font-size: 12px;
+    color: #333;
+}

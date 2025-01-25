@@ -115,3 +115,12 @@ body {
     transform: translateY(-50%);
     color: #888;
 }
+
+.order-image {
+    height: 60px;
+}
+
+.order-name,
+.order-value {
+    font-size: 14px;
+}

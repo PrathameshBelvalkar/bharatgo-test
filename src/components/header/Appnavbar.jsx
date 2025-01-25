@@ -1,12 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { HiBars3CenterLeft, HiMiniUserCircle, HiMiniXMark, HiShoppingCart } from 'react-icons/hi2';
-import { Collapse, Dropdown, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavbarText, NavbarToggler, NavItem, NavLink } from 'reactstrap'
-
+import { Collapse, Dropdown, DropdownMenu, DropdownToggle, Nav, Navbar, NavbarBrand, NavbarText, NavItem, NavLink } from 'reactstrap';
+import { useSelector } from 'react-redux';
+import CartModal from '../cart/CartModal';
 export default function Appnavbar() {
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(!isOpen);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const toggledropdown = () => setDropdownOpen((prevState) => !prevState);
+    const totalQuantity = useSelector((state) => state.cart.totalQuantity);
+    const [modal, setModal] = useState(false);
+    const modaltoggle = () => setModal(!modal);
     return (
         <Navbar expand="md" className='border-bottom border-2 p-3'>
             <NavbarBrand className='fw-medium fs-5'>Shopi</NavbarBrand>
@@ -29,7 +33,7 @@ export default function Appnavbar() {
                             My Account
                         </div>
                         <div className='mb-3'>
-                            Custom dropdown item
+                            Cart
                         </div>
                     </DropdownMenu>
                 </Dropdown>
@@ -57,9 +61,10 @@ export default function Appnavbar() {
                     <NavbarText className='user-mail'>userintheapp@test.com</NavbarText>
                     <NavbarText>My Orders</NavbarText>
                     <NavbarText>My Account</NavbarText>
-                    <NavbarText className='text-dark'><HiShoppingCart size={24} /><span className='ms-2'>0</span></NavbarText>
+                    <NavbarText className='text-dark' onClick={modaltoggle}><HiShoppingCart size={24} /><span className='ms-2'>{totalQuantity}</span></NavbarText>
                 </div>
             </Collapse>
+            <CartModal modal={modal} modaltoggle={modaltoggle} />
         </Navbar>
     )
 }
