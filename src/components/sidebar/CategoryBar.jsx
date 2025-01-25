@@ -7,6 +7,7 @@ import DualRangeSlider from "./components/DualRangeSlider";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import debounce from "lodash.debounce";
+import { useParams } from "react-router-dom";
 
 export default function CategoryBar({ className, onPriceRangeChange, onCategoryChange, onSearchChange }) {
     const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
